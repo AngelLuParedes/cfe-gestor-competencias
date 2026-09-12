@@ -1,0 +1,1 @@
+{"version":3,"file":"indexController.d.ts","sourceRoot":"","sources":["../../src/controllers/indexController.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAE5C,cAAM,eAAe;IACV,KAAK,CAAC,GAAG,EAAE,OAAO,EAAC,GAAG,EAAE,QAAQ;CAG1C;AAED,eAAO,MAAM,eAAe,iBAAwB,CAAC"}

@@ -1,0 +1,43 @@
+<div class="container mt-4 mb-5">
+  <div class="card shadow border-0 rounded-4">
+    <div class="card-header bg-primary text-white p-4 text-center">
+      <h3 class="mb-0">Registro de Nuevo Curso Técnico</h3>
+    </div>
+    <div class="card-body p-5">
+      <form (submit)="guardar()" class="row g-3">
+        
+        <div class="col-md-3">
+          <label class="form-label fw-bold">Clave del Curso</label>
+          <input type="text" name="CLAVE_CURSO" [(ngModel)]="curso.CLAVE_CURSO" class="form-control" required placeholder="Ej: C-001">
+        </div>
+        <div class="col-md-9">
+          <label class="form-label fw-bold">Nombre del Curso</label>
+          <input type="text" name="NOMBRE_DEL_CURSO" [(ngModel)]="curso.NOMBRE_DEL_CURSO" class="form-control" required placeholder="Nombre completo del tema">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Subproceso</label>
+          <input type="text" name="SUBPROCESO" [(ngModel)]="curso.SUBPROCESO" class="form-control">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Área</label>
+          <input type="text" name="AREA" [(ngModel)]="curso.AREA" class="form-control">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Año de Registro</label>
+          <input type="number" name="AÑO" [(ngModel)]="curso['AÑO']" class="form-control">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label fw-bold">Duración (Horas)</label>
+          <input type="number" name="DURACION_REAL_HRS" [(ngModel)]="curso.DURACION_REAL_HRS" class="form-control" min="1">
+        </div>
+
+        <div class="col-12 mt-5 d-flex justify-content-center gap-3">
+          <button type="submit" class="btn btn-success btn-lg px-5 rounded-pill">Registrar Catálogo</button>
+          <a routerLink="/curso" class="btn btn-outline-secondary btn-lg px-5 rounded-pill">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,326 @@
+<div class="login-wrapper">
+
+  <!-- ── PANEL IZQUIERDO ── -->
+  <aside class="login-brand">
+    <div class="brand-inner">
+      <div class="brand-logo">
+        <img src="/logo-cfe.png" alt="CFE" class="logo-img" />
+      </div>
+      <h1 class="brand-title">Sistema de Gestión<br><span>de Capacitación</span></h1>
+      <p class="brand-sub">Comisión Federal de Electricidad</p>
+
+      <ul class="brand-features">
+      </ul>
+    </div>
+    <!-- decoración -->
+    <div class="brand-deco">
+      <div class="deco-ring deco-ring--1"></div>
+      <div class="deco-ring deco-ring--2"></div>
+      <div class="deco-ring deco-ring--3"></div>
+      <div class="deco-bar deco-bar--1"></div>
+      <div class="deco-bar deco-bar--2"></div>
+    </div>
+  </aside>
+
+  <!-- ── PANEL DERECHO ── -->
+  <main class="login-panel">
+    <div class="login-card" [class.card-shake]="mensajeError">
+
+      <!-- Header -->
+      <div class="lc-header">
+        <h2>Bienvenido</h2>
+        <p>Ingresa tus credenciales para continuar</p>
+      </div>
+
+      <!-- Alerta error -->
+      <div class="lc-alert lc-alert--error" *ngIf="mensajeError" role="alert">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>{{ mensajeError }}</span>
+        <button class="alert-close" (click)="limpiarError()" aria-label="Cerrar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Formulario -->
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm" novalidate>
+
+        <div class="lc-field">
+          <label for="loginEmail">Correo o clave de acceso</label>
+          <div class="field-wrap">
+            <i class="fa-solid fa-envelope field-icon"></i>
+            <input
+              id="loginEmail"
+              type="text"
+              name="email"
+              [(ngModel)]="credentials.email"
+              placeholder="usuario@cfe.gob.mx o A1B2C"
+              autocomplete="username"
+              required
+              pattern="^([a-zA-Z0-9]{5}|[^\s@]+@[^\s@]+\.[^\s@]+)$"
+              (focus)="limpiarError()"
+              [disabled]="cargando" />
+          </div>
+        </div>
+
+        <div class="lc-field">
+          <label for="loginPass">Contraseña</label>
+          <div class="field-wrap">
+            <i class="fa-solid fa-lock field-icon"></i>
+            <input
+              id="loginPass"
+              [type]="mostrarPassword ? 'text' : 'password'"
+              name="password"
+              [(ngModel)]="credentials.password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+              required
+              minlength="6"
+              (focus)="limpiarError()"
+              [disabled]="cargando" />
+            <button
+              type="button"
+              class="toggle-pass"
+              (click)="togglePassword()"
+              [disabled]="cargando"
+              [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+              <i class="fa-solid" [class.fa-eye]="!mostrarPassword" [class.fa-eye-slash]="mostrarPassword"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="lc-remember">
+          <label class="checkbox-wrap">
+            <input type="checkbox" id="recordarme" />
+            <span class="checkmark"></span>
+            Recordar mi sesión
+          </label>
+          <a href="#" class="forgot-link" (click)="$event.preventDefault(); abrirModalRecuperar()">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <button
+          type="submit"
+          class="btn-login"
+          [disabled]="cargando || !loginForm.valid">
+          <span class="btn-content" *ngIf="!cargando">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            Iniciar sesión
+          </span>
+          <span class="btn-content" *ngIf="cargando">
+            <span class="spin-ring"></span>
+            Verificando…
+          </span>
+        </button>
+
+      </form>
+
+      <!-- Separador -->
+      <div class="lc-divider">
+        <span>¿Eres administrador?</span>
+      </div>
+
+      <!-- Botón agregar usuario -->
+      <button class="btn-register" type="button" (click)="abrirModalRegistro()">
+        <i class="fa-solid fa-user-plus"></i>
+        Agregar nuevo usuario
+      </button>
+
+      <p class="lc-footer">
+        <i class="fa-solid fa-shield-halved"></i>
+        Información protegida · © 2025 CFE
+      </p>
+    </div>
+  </main>
+
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     MODAL — REGISTRAR NUEVO USUARIO
+══════════════════════════════════════════════════ -->
+<div class="modal-overlay" [class.modal-open]="mostrarModalRegistro" (click)="cerrarModalRegistro($event)">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+    <!-- Header modal -->
+    <div class="modal-header">
+      <div class="modal-icon">
+        <i class="fa-solid fa-user-plus"></i>
+      </div>
+      <div>
+        <h3 id="modal-title">Nuevo usuario</h3>
+        <p>Completa los datos para crear la cuenta</p>
+      </div>
+      <button class="modal-close" (click)="cerrarModal()" aria-label="Cerrar modal">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Alerta error registro -->
+    <div class="lc-alert lc-alert--error" *ngIf="errorRegistro" role="alert">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <span>{{ errorRegistro }}</span>
+    </div>
+
+    <!-- Alerta éxito registro -->
+    <div class="lc-alert lc-alert--success" *ngIf="exitoRegistro" role="alert">
+      <i class="fa-solid fa-circle-check"></i>
+      <span>{{ exitoRegistro }}</span>
+    </div>
+
+    <!-- Formulario registro -->
+    <form (ngSubmit)="onRegistro()" #regForm="ngForm" novalidate class="modal-form">
+
+      <div class="form-row">
+        <div class="lc-field">
+          <label>Nombre completo <span class="req">*</span></label>
+          <div class="field-wrap">
+            <i class="fa-solid fa-id-card field-icon"></i>
+            <input
+              type="text"
+              name="reg_nombre_completo"
+              [(ngModel)]="nuevoUsuario.nombre_completo"
+              placeholder="Juan Pérez López"
+              required
+              [disabled]="registrando" />
+          </div>
+        </div>
+        <div class="lc-field">
+          <label>Nombre de usuario <span class="req">*</span></label>
+          <div class="field-wrap">
+            <i class="fa-solid fa-at field-icon"></i>
+            <input
+              type="text"
+              name="reg_usuario"
+              [(ngModel)]="nuevoUsuario.nombre_usuario"
+              placeholder="jperez"
+              required
+              [disabled]="registrando" />
+          </div>
+        </div>
+      </div>
+
+      <div class="lc-field">
+        <label>Correo o clave de acceso <span class="req">*</span></label>
+        <div class="field-wrap">
+          <i class="fa-solid fa-envelope field-icon"></i>
+          <input
+            type="text"
+            name="reg_email"
+            [(ngModel)]="nuevoUsuario.email"
+            placeholder="jperez@cfe.gob.mx o A1B2C"
+            required
+            pattern="^([a-zA-Z0-9]{5}|[^\s@]+@[^\s@]+\.[^\s@]+)$"
+            #regEmail="ngModel"
+            [disabled]="registrando" />
+        </div>
+        <small class="field-hint" *ngIf="regEmail.invalid && regEmail.touched">
+          Usa un correo válido o una clave de exactamente 5 caracteres (letras/números)
+        </small>
+      </div>
+
+      <div class="form-row">
+        <div class="lc-field">
+          <label>Contraseña <span class="req">*</span></label>
+          <div class="field-wrap">
+            <i class="fa-solid fa-key field-icon"></i>
+            <input
+              [type]="mostrarPassReg ? 'text' : 'password'"
+              name="reg_password"
+              [(ngModel)]="nuevoUsuario.password"
+              placeholder="Mín. 6 caracteres"
+              required
+              minlength="6"
+              [disabled]="registrando" />
+            <button type="button" class="toggle-pass" (click)="mostrarPassReg = !mostrarPassReg">
+              <i class="fa-solid" [class.fa-eye]="!mostrarPassReg" [class.fa-eye-slash]="mostrarPassReg"></i>
+            </button>
+          </div>
+        </div>
+        <div class="lc-field">
+          <label>Rol</label>
+          <div class="field-wrap">
+            <i class="fa-solid fa-shield field-icon"></i>
+            <select name="reg_rol" [(ngModel)]="nuevoUsuario.rol" [disabled]="registrando" class="select-rol">
+              <option value="usuario">👤 Usuario</option>
+              <option value="supervisor">🔍 Supervisor</option>
+              <option value="admin">🛡 Administrador</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="cerrarModal()" [disabled]="registrando">
+          Cancelar
+        </button>
+        <button type="submit" class="btn-confirm" [disabled]="registrando || !regForm.valid">
+          <span *ngIf="!registrando">
+            <i class="fa-solid fa-user-plus"></i> Crear usuario
+          </span>
+          <span *ngIf="registrando" class="btn-content">
+            <span class="spin-ring"></span> Creando…
+          </span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     MODAL — RECUPERAR CONTRASEÑA
+══════════════════════════════════════════════════ -->
+<div class="modal-overlay" [class.modal-open]="mostrarModalRecuperar" (click)="cerrarModalRecuperarOverlay($event)">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="recuperar-title">
+
+    <div class="modal-header">
+      <div class="modal-icon">
+        <i class="fa-solid fa-key"></i>
+      </div>
+      <div>
+        <h3 id="recuperar-title">Recuperar contraseña</h3>
+        <p>Ingresa tu correo o clave de acceso</p>
+      </div>
+      <button class="modal-close" (click)="cerrarModalRecuperar()" aria-label="Cerrar modal">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="lc-alert lc-alert--error" *ngIf="errorRecuperar" role="alert">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <span>{{ errorRecuperar }}</span>
+    </div>
+
+    <div class="lc-alert lc-alert--success" *ngIf="exitoRecuperar" role="alert">
+      <i class="fa-solid fa-circle-check"></i>
+      <span>{{ exitoRecuperar }}</span>
+    </div>
+
+    <form (ngSubmit)="onRecuperarPassword()" #recForm="ngForm" novalidate class="modal-form">
+      <div class="lc-field">
+        <label>Correo o clave <span class="req">*</span></label>
+        <div class="field-wrap">
+          <i class="fa-solid fa-envelope field-icon"></i>
+          <input
+            type="text"
+            name="identificador"
+            [(ngModel)]="identificadorRecuperar"
+            placeholder="jperez@cfe.gob.mx o A1B2C"
+            required
+            pattern="^([a-zA-Z0-9]{5}|[^\s@]+@[^\s@]+\.[^\s@]+)$"
+            [disabled]="recuperando" />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="cerrarModalRecuperar()" [disabled]="recuperando">
+          Cancelar
+        </button>
+        <button type="submit" class="btn-confirm" [disabled]="recuperando || !recForm.valid">
+          <span *ngIf="!recuperando"><i class="fa-solid fa-paper-plane"></i> Enviar</span>
+          <span *ngIf="recuperando" class="btn-content"><span class="spin-ring"></span> Enviando…</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

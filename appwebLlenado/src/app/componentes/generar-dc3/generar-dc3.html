@@ -1,0 +1,290 @@
+<div class="container mt-4 animate__animated animate__fadeIn">
+  <h2 class="text-primary fw-bold mb-4 border-bottom pb-2">
+    <i class="fa-solid fa-file-invoice me-2"></i>Generador Manual DC-3
+  </h2>
+
+  <!-- ── Firmas — elige del catálogo O escribe manualmente ───────────────────── -->
+  <div class="card shadow-sm border-0 rounded-4 mb-4">
+    <div class="card-header bg-white border-bottom p-3">
+      <h6 class="mb-0 text-secondary fw-bold">
+        <i class="fa-solid fa-signature me-2 text-primary"></i>
+        Responsables que firmarán
+        <span class="badge bg-primary-subtle text-primary ms-2 small fw-normal">
+          Elige de la lista o escribe manualmente
+        </span>
+      </h6>
+    </div>
+    <div class="card-body p-3">
+      <div class="row g-3">
+
+        <div class="col-md-4">
+          <label class="form-label small fw-bold text-muted text-uppercase mb-1">
+            <i class="fa-solid fa-chalkboard-user me-1 text-info"></i>Instructor o Tutor
+          </label>
+          <!-- input con datalist: puedes seleccionar del catálogo o escribir -->
+          <input class="form-control border-2 shadow-sm"
+                 list="listaInstructores"
+                 [(ngModel)]="datos.firmas.instructor"
+                 placeholder="Selecciona o escribe el nombre...">
+          <datalist id="listaInstructores">
+            <option *ngFor="let n of catInstructores" [value]="n">{{ n }}</option>
+          </datalist>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label small fw-bold text-muted text-uppercase mb-1">
+            <i class="fa-solid fa-briefcase me-1 text-warning"></i>Patrón o Rep. Legal CAMCAyPL
+          </label>
+          <input class="form-control border-2 shadow-sm"
+                 list="listaPatrones"
+                 [(ngModel)]="datos.firmas.patron"
+                 placeholder="Selecciona o escribe el nombre...">
+          <datalist id="listaPatrones">
+            <option *ngFor="let n of catPatrones" [value]="n">{{ n }}</option>
+          </datalist>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label small fw-bold text-muted text-uppercase mb-1">
+            <i class="fa-solid fa-users-gear me-1 text-success"></i>Rep. Trabajadores CAMCAyPL
+          </label>
+          <input class="form-control border-2 shadow-sm"
+                 list="listaRepresentantes"
+                 [(ngModel)]="datos.firmas.representante"
+                 placeholder="Selecciona o escribe el nombre...">
+          <datalist id="listaRepresentantes">
+            <option *ngFor="let n of catRepresentantes" [value]="n">{{ n }}</option>
+          </datalist>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Formulario ─────────────────────────────────────────────────────────── -->
+  <div class="row g-4">
+
+    <!-- Trabajador -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 rounded-4 h-100">
+        <div class="card-header bg-primary text-white rounded-top-4 py-3">
+          <h5 class="mb-0"><i class="fa-solid fa-user-gear me-2"></i>1. Datos del Trabajador</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-3">
+            <label class="form-label fw-bold small text-muted">BUSCAR POR NOMBRE O RPE</label>
+            <input class="form-control border-2 shadow-sm" list="trabajadoresList"
+                   [(ngModel)]="datos.trabajador.nombre"
+                   (ngModelChange)="onTrabajadorChange()"
+                   placeholder="Escribe para buscar o escribe manualmente">
+            <datalist id="trabajadoresList">
+              <option *ngFor="let t of listaTrabajadores" [value]="t.NOMBRE_COMPLETO">{{ t.RPE }}</option>
+            </datalist>
+          </div>
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="small fw-bold">CURP</label>
+              <input class="form-control" [(ngModel)]="datos.trabajador.curp" placeholder="18 caracteres">
+            </div>
+            <div class="col-6">
+              <label class="small fw-bold">RPE</label>
+              <input class="form-control" [(ngModel)]="datos.trabajador.rpe" placeholder="Ej. 9K78U">
+            </div>
+            <div class="col-12">
+              <label class="small fw-bold">PUESTO</label>
+              <input class="form-control" [(ngModel)]="datos.trabajador.puesto" placeholder="Ej. LINIERO">
+            </div>
+            <div class="col-12">
+              <label class="small fw-bold">OCUPACIÓN DC-3</label>
+              <textarea class="form-control" rows="2" [(ngModel)]="datos.trabajador.ocupacion"
+                        placeholder="Ej. 242030302 - LINIERO ENCARGADO DE SUBESTACION"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Curso -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 rounded-4 h-100">
+        <div class="card-header bg-dark text-white rounded-top-4 py-3">
+          <h5 class="mb-0"><i class="fa-solid fa-graduation-cap me-2"></i>2. Datos del Programa</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-3">
+            <label class="form-label fw-bold small text-muted">BUSCAR CURSO O ESCRIBIR MANUALMENTE</label>
+            <input class="form-control border-2 shadow-sm" list="cursosList"
+                   [(ngModel)]="datos.curso.nombre"
+                   (change)="onCursoChange()"
+                   placeholder="Escribe el nombre del curso...">
+            <datalist id="cursosList">
+              <option *ngFor="let c of listaCursos" [value]="c.NOMBRE_DEL_CURSO">{{ c.ACTIVIDAD }}</option>
+            </datalist>
+          </div>
+          <div class="row g-2">
+            <div class="col-4">
+              <label class="small fw-bold">DURACIÓN (hrs)</label>
+              <input class="form-control" [(ngModel)]="datos.curso.duracion" placeholder="Ej. 24">
+            </div>
+            <div class="col-8">
+              <label class="small fw-bold">CLAVE ACTIVIDAD <span class="text-muted fw-normal">(editable)</span></label>
+              <input class="form-control" [(ngModel)]="datos.curso.actividad"
+                     placeholder="Se rellena al buscar o escribe manualmente">
+            </div>
+
+            <!-- ÁREA TEMÁTICA — busca del catálogo o escribe manualmente -->
+            <div class="col-12">
+              <label class="small fw-bold">
+                ÁREA TEMÁTICA
+                <span class="text-muted fw-normal">(elige del catálogo o escribe)</span>
+              </label>
+              <input class="form-control border-2"
+                     list="listaAreasTematicas"
+                     [(ngModel)]="datos.curso.area"
+                     (change)="onAreaChange()"
+                     placeholder="Busca por clave o nombre de área...">
+              <datalist id="listaAreasTematicas">
+                <option *ngFor="let a of listaAreas"
+                        [value]="a.clave + ' - ' + a.nombre_area">
+                  {{ a.clave }} — {{ a.nombre_area }}
+                </option>
+              </datalist>
+              <div class="form-text text-muted" *ngIf="listaAreas.length > 0">
+                <i class="fa-solid fa-circle-info me-1"></i>
+                {{ listaAreas.length }} áreas disponibles en el catálogo
+              </div>
+            </div>
+
+            <div class="col-6">
+              <label class="small fw-bold">FECHA INICIO</label>
+              <input type="date" class="form-control" [(ngModel)]="datos.curso.fecha_inicio">
+            </div>
+            <div class="col-6">
+              <label class="small fw-bold">FECHA TÉRMINO</label>
+              <input type="date" class="form-control" [(ngModel)]="datos.curso.fecha_termino">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Botones de acción ───────────────────────────────────────────────────── -->
+  <div class="d-flex justify-content-center gap-3 mt-5 flex-wrap">
+    <button (click)="previsualizarPDF()" class="btn btn-danger btn-lg px-4 rounded-pill shadow-lg fw-bold">
+      <i class="fa-solid fa-file-pdf me-2"></i>Previsualizar DC-3
+    </button>
+    <button (click)="agregarACola()" class="btn btn-warning btn-lg px-4 rounded-pill shadow-lg fw-bold text-dark">
+      <i class="fa-solid fa-layer-group me-2"></i>
+      Agregar a Cola
+      <span class="badge bg-dark ms-1" *ngIf="tieneCola">{{ cola.length }}</span>
+    </button>
+  </div>
+
+  <!-- ── Panel de Cola de PDFs ──────────────────────────────────────────────── -->
+  <div class="card shadow border-0 rounded-4 mt-5 mb-5" *ngIf="tieneCola">
+    <div class="card-header bg-warning rounded-top-4 py-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <h5 class="mb-0 fw-bold text-dark">
+        <i class="fa-solid fa-layer-group me-2"></i>
+        Cola de PDFs <span class="badge bg-dark ms-2">{{ cola.length }}</span>
+      </h5>
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="form-check form-switch mb-0 d-flex align-items-center gap-2">
+          <input class="form-check-input" type="checkbox" id="modoUnidoSwitch"
+                 [(ngModel)]="modoUnido" role="switch" style="width:2.5rem;height:1.3rem;">
+          <label class="form-check-label fw-bold small" for="modoUnidoSwitch">
+            {{ modoUnido ? '📄 Un solo PDF' : '📂 Archivos separados' }}
+          </label>
+        </div>
+        <button class="btn btn-sm btn-outline-dark rounded-pill" (click)="vaciarCola()">
+          <i class="fa-solid fa-trash me-1"></i>Vaciar
+        </button>
+        <button class="btn btn-dark btn-sm rounded-pill fw-bold px-3"
+                (click)="descargarCola()" [disabled]="descargandoLote">
+          <span *ngIf="!descargandoLote">
+            <i class="fa-solid fa-download me-1"></i>
+            {{ modoUnido ? 'Descargar Todo Junto' : 'Descargar Todos' }}
+          </span>
+          <span *ngIf="descargandoLote">
+            <span class="spinner-border spinner-border-sm me-1"></span>Fusionando...
+          </span>
+        </button>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div class="list-group list-group-flush rounded-bottom-4">
+        <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-4"
+             *ngFor="let item of cola; let i = index">
+          <div class="d-flex align-items-center gap-3">
+            <span class="badge bg-secondary rounded-pill">{{ i + 1 }}</span>
+            <span class="small fw-semibold text-dark">{{ item.etiqueta }}</span>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-info rounded-pill" (click)="previsualizarItemCola(item)">
+              <i class="fa-solid fa-eye me-1"></i>Ver
+            </button>
+            <button class="btn btn-sm btn-outline-success rounded-pill" (click)="descargarDeCola(item)">
+              <i class="fa-solid fa-download me-1"></i>Bajar
+            </button>
+            <button class="btn btn-sm btn-outline-danger rounded-pill" (click)="quitarDeCola(item)">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer bg-light rounded-bottom-4 text-center py-2">
+      <small class="text-muted">
+        <i class="fa-solid fa-circle-info me-1"></i>
+        Puedes seguir llenando el formulario y agregar más constancias antes de descargar.
+      </small>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ── Modal: Vista Previa ─────────────────────────────────────────────────── -->
+<div class="modal fade" id="modalVistaPreviaManual" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0 rounded-4">
+      <div class="modal-header bg-dark text-white rounded-top-4">
+        <h5 class="modal-title fw-bold">
+          <i class="fa-solid fa-file-pdf text-danger me-2"></i>
+          Vista Previa — {{ datos.trabajador.nombre || 'DC-3' }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="cerrarVistaPrevia()"></button>
+      </div>
+      <div class="modal-body p-0 bg-light" style="height:75vh;">
+        <div class="d-flex justify-content-center align-items-center h-100" *ngIf="cargandoPdf">
+          <div class="text-center text-secondary">
+            <div class="spinner-border border-3 text-primary mb-3" style="width:3rem;height:3rem;" role="status"></div>
+            <h5 class="fw-bold">Generando Documento...</h5>
+          </div>
+        </div>
+        <iframe *ngIf="pdfUrlSegura && !cargandoPdf"
+                [src]="pdfUrlSegura" class="w-100 h-100 border-0" title="Vista Previa PDF"></iframe>
+      </div>
+      <div class="modal-footer bg-light rounded-bottom-4 d-flex justify-content-between">
+        <div class="small text-muted d-none d-md-flex align-items-center gap-3">
+          <span><strong>Inst:</strong> {{ datos.firmas.instructor }}</span>
+          <span><strong>Pat:</strong>  {{ datos.firmas.patron }}</span>
+          <span><strong>Rep:</strong>  {{ datos.firmas.representante }}</span>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-secondary fw-bold rounded-pill" (click)="cerrarVistaPrevia()">
+            <i class="fa-solid fa-xmark me-1"></i>Cerrar
+          </button>
+          <ng-container *ngIf="pdfUrlSegura && !cargandoPdf">
+            <button class="btn btn-warning fw-bold rounded-pill text-dark"
+                    (click)="agregarACola(); cerrarVistaPrevia()">
+              <i class="fa-solid fa-layer-group me-1"></i>Agregar a Cola
+            </button>
+            <button class="btn btn-success fw-bold rounded-pill" (click)="descargarPdf()">
+              <i class="fa-solid fa-download me-1"></i>Descargar
+            </button>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

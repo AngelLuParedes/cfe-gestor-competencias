@@ -1,0 +1,269 @@
+<div class="container-fluid mt-4 mb-5">
+  
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h2 class="text-primary fw-bold mb-2">
+            <i class="fa-solid fa-calendar-check me-2"></i>Control de Vigencia de Cursos
+          </h2>
+          <p class="text-muted small mb-0">
+            Monitorea la vigencia de los cursos de seguridad y salud de tus trabajadores
+          </p>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-success fw-bold shadow-sm" (click)="descargarExcelAnalisis()">
+            <i class="fa-solid fa-file-excel me-2"></i> Exportar Análisis a Excel
+          </button>
+          <button class="btn btn-outline-secondary fw-bold" (click)="limpiarFiltrosGenerales()">
+            <i class="fa-solid fa-rotate-right me-2"></i> Reiniciar Filtros
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4 g-3">
+    <div class="col-12 col-md-3">
+      <div class="dropdown">
+        <button class="btn btn-outline-info w-100 fw-bold dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          <i class="fa-solid fa-calendar me-2"></i> {{ obtenerNombreMes() }}
+        </button>
+        <ul class="dropdown-menu w-100">
+          <li><button class="dropdown-item fw-bold" (click)="limpiarMes()"><i class="fa-solid fa-list me-2"></i> Todos los meses</button></li>
+          <li><hr class="dropdown-divider" /></li>
+          @for (mes of meses; track mes.numero) {
+            <li><button class="dropdown-item" [ngClass]="{ active: mesFiltro === mes.numero }" (click)="cargarPorMes(mes.numero)">{{ mes.nombre }}</button></li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-3">
+      <div class="dropdown">
+        <button class="btn btn-outline-primary w-100 fw-bold dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          <i class="fa-solid fa-calendar-days me-2"></i> {{ anioFiltro ? anioFiltro : 'Filtrar por año' }}
+        </button>
+        <ul class="dropdown-menu w-100">
+          <li><button class="dropdown-item fw-bold" (click)="seleccionarAnio(null)"><i class="fa-solid fa-list me-2"></i> Todos los años</button></li>
+          <li><hr class="dropdown-divider" /></li>
+          @for (anio of anios; track anio) {
+            <li><button class="dropdown-item" [ngClass]="{ active: anioFiltro === anio }" (click)="seleccionarAnio(anio)">{{ anio }}</button></li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-3">
+      <div class="dropdown">
+        <button class="btn btn-outline-secondary w-100 fw-bold dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          <i class="fa-solid fa-layer-group me-2"></i> {{ grupoCursos === 'todos' ? 'Todos los Cursos' : 'Cursos Críticos' }}
+        </button>
+        <ul class="dropdown-menu w-100">
+          <li><button class="dropdown-item fw-bold" [ngClass]="{ active: grupoCursos === 'todos' }" (click)="cambiarGrupoCursos('todos')">Todos los Cursos</button></li>
+          <li><button class="dropdown-item fw-bold text-danger" [ngClass]="{ active: grupoCursos === 'criticos' }" (click)="cambiarGrupoCursos('criticos')">Mostrar solo 5 Críticos</button></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-3">
+      <div class="input-group">
+        <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+        <input type="text" class="form-control border-start-0" placeholder="Buscar por RPE..." [(ngModel)]="terminoBusqueda" (keyup)="filtrar()"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4 g-3">
+    <div class="col-12 col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 bg-light">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <p class="text-muted small mb-1 fw-bold text-uppercase">Trabajadores</p>
+              <h3 class="text-primary fw-bold mb-0">{{ totales.trabajadores }}</h3>
+            </div>
+            <i class="fa-solid fa-users fa-2x text-primary opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 bg-light card-filtro" 
+           [class.active-por-vencer]="estadoSeleccionado === 'POR_VENCER'" 
+           (click)="seleccionarEstado('POR_VENCER')">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <p class="text-muted small mb-1 fw-bold text-uppercase">Por Vencer</p>
+              <h3 class="text-warning fw-bold mb-0">{{ totales.porVencer }}</h3>
+            </div>
+            <i class="fa-solid fa-triangle-exclamation fa-2x text-warning opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 bg-light card-filtro"
+           [class.active-vencido]="estadoSeleccionado === 'VENCIDO'"
+           (click)="seleccionarEstado('VENCIDO')">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <p class="text-muted small mb-1 fw-bold text-uppercase">Vencidos</p>
+              <h3 class="text-danger fw-bold mb-0">{{ totales.vencidos }}</h3>
+            </div>
+            <i class="fa-solid fa-circle-xmark fa-2x text-danger opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-3">
+      <div class="card border-0 shadow-sm rounded-4 bg-light card-filtro"
+           [class.active-reprobado]="estadoSeleccionado === 'REPROBADO'"
+           (click)="seleccionarEstado('REPROBADO')">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <p class="text-muted small mb-1 fw-bold text-uppercase">Reprobados</p>
+              <h3 class="text-dark fw-bold mb-0">{{ totales.reprobados }}</h3>
+            </div>
+            <i class="fa-solid fa-skull-crossbones fa-2x text-dark opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (cargando) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem" role="status"></div>
+      <p class="text-muted fw-medium">Cargando datos...</p>
+    </div>
+  } @else if (trabajadoresFiltrados.length === 0) {
+    <div class="alert alert-light border shadow-sm rounded-4 text-center py-5">
+      <i class="fa-solid fa-inbox fa-3x mb-3 text-muted opacity-50"></i>
+      <p class="text-muted fw-medium mb-0">No hay registros que mostrar con los filtros seleccionados.</p>
+    </div>
+  } @else {
+    <div class="row g-4">
+      @for (trabajador of trabajadoresPaginados; track trabajador.RPE) {
+        <div class="col-12">
+          <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-header bg-primary text-white p-3 border-0">
+              <div class="row align-items-center">
+                <div class="col-md-6">
+                  <div class="d-flex align-items-center gap-3">
+                    <i class="fa-solid fa-circle-user fa-2x"></i>
+                    <div>
+                      <div class="small opacity-75 fw-bold">{{ trabajador.RPE }}</div>
+                      <h5 class="fw-bold mb-1">{{ trabajador.NOMBRE_COMPLETO }}</h5>
+                      <small class="opacity-75"><i class="fa-solid fa-briefcase me-1"></i>{{ trabajador.PUESTO || 'Sin puesto asignado' }}</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 mt-2 mt-md-0">
+                  <div class="row text-center g-2 bg-white bg-opacity-10 rounded-3 p-2">
+                    <div class="col-3 border-end border-white border-opacity-25">
+                      <div class="small opacity-75">Vigentes</div>
+                      <strong class="fs-5">{{ contarPorEstado(trabajador).vigentes }}</strong>
+                    </div>
+                    <div class="col-3 border-end border-white border-opacity-25">
+                      <div class="small opacity-75">Por Vencer</div>
+                      <strong class="fs-5 text-warning">{{ contarPorEstado(trabajador).porVencer }}</strong>
+                    </div>
+                    <div class="col-3 border-end border-white border-opacity-25">
+                      <div class="small opacity-75">Vencidos</div>
+                      <strong class="fs-5 text-danger">{{ contarPorEstado(trabajador).vencidos }}</strong>
+                    </div>
+                    <div class="col-3">
+                      <div class="small opacity-75">Reprobados</div>
+                      <strong class="fs-5 text-dark">{{ contarPorEstado(trabajador).reprobados }}</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover mb-0 small">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="fw-bold text-muted">Curso</th>
+                      <th class="fw-bold text-muted text-center">Fecha Término</th>
+                      <th class="fw-bold text-muted text-center">Calificación</th>
+                      <th class="fw-bold text-muted text-center">Vigencia</th>
+                      <th class="fw-bold text-muted text-center">Vencimiento</th>
+                      <th class="fw-bold text-muted text-center">Estatus</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (curso of trabajador.cursos; track curso.id_registro) {
+                      <tr [ngClass]="'estado-' + curso.estado_vigencia.toLowerCase()">
+                        <td>
+                          <strong class="text-dark">{{ curso.nombre_curso }}</strong>
+                          <br /><small class="text-muted">Clave: {{ curso.clave_curso }}</small>
+                        </td>
+                        <td class="text-center text-muted align-middle">{{ curso.fecha_termino | date: 'dd/MM/yyyy' }}</td>
+                        <td class="text-center fw-bold align-middle">
+                          @if (curso.calificacion !== null) {
+                            <span [ngClass]="curso.calificacion >= 80 ? 'text-success' : 'text-danger'">{{ curso.calificacion }}</span>
+                          } @else { <span class="text-muted fw-normal">N/A</span> }
+                        </td>
+                        <td class="text-center fw-bold align-middle">
+                          @if (curso.vigencia_aplicada > 0) { <span class="text-dark">{{ curso.vigencia_aplicada }} año(s)</span> }
+                          @else { <span class="badge bg-secondary opacity-75">Sin vigencia</span> }
+                        </td>
+                        <td class="text-center fw-bold text-dark align-middle">
+                          @if (curso.fecha_vencimiento) { {{ curso.fecha_vencimiento | date: 'dd/MM/yyyy' }} }
+                          @else { <span class="text-muted fw-normal">No caduca</span> }
+                        </td>
+                        <td class="text-center align-middle">
+                          <span class="badge rounded-pill"
+                            [ngClass]="{
+                              'bg-success': curso.estado_vigencia === 'VIGENTE',
+                              'bg-warning text-dark': curso.estado_vigencia === 'POR_VENCER',
+                              'bg-danger': curso.estado_vigencia === 'VENCIDO',
+                              'bg-dark': curso.estado_vigencia === 'REPROBADO'
+                            }">
+                            {{ obtenerEstadoTexto(curso.estado_vigencia) }}
+                            @if (curso.dias_restantes !== null && curso.estado_vigencia !== 'REPROBADO' && curso.estado_vigencia !== 'VIGENTE') {
+                              <br />
+                              <small class="fw-normal mt-1 d-block opacity-75" style="font-size: 0.75rem;">
+                                @if (curso.estado_vigencia === 'VENCIDO') {
+                                  Hace {{ Math.abs(curso.dias_restantes) }} días
+                                } @else {
+                                  En {{ curso.dias_restantes }} días
+                                }
+                              </small>
+                            }
+                          </span>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+      <span class="text-muted fw-bold">Página {{ paginaActual }} de {{ paginasTotales }}</span>
+      <div class="btn-group shadow-sm">
+        <button class="btn btn-white border" [disabled]="paginaActual === 1" (click)="cambiarPagina(-1)">
+          <i class="fa-solid fa-chevron-left me-1"></i> Anterior
+        </button>
+        <button class="btn btn-white border" [disabled]="paginaActual === paginasTotales" (click)="cambiarPagina(1)">
+          Siguiente <i class="fa-solid fa-chevron-right ms-1"></i>
+        </button>
+      </div>
+    </div>
+  }
+</div>

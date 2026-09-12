@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bootstrap": "^5.3.8",
+    "bootswatch": "^5.3.8",
+    "docx": "^9.5.1",
+    "docxtemplater": "^3.67.6",
+    "jsonwebtoken": "^9.0.3",
+    "pdf-lib": "^1.17.1",
+    "pizzip": "^3.2.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/bootstrap": "^5.2.10",
+    "@types/jsonwebtoken": "^9.0.10"
+  }
+}

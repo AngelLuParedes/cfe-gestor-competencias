@@ -1,0 +1,181 @@
+/* ========================================================
+   SISTEMA INSTITUCIONAL DC-3 | CFE (DISEÑO PREMIUM)
+   ======================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --cfe-verde-primario: #007A33;
+  --cfe-verde-oscuro: #005624;
+  --cfe-verde-claro: #e6f2eb;
+  --cfe-gris-fondo: #f4f6f9;
+  --cfe-texto-principal: #2c3e50;
+  --cfe-texto-secundario: #6c757d;
+  --blanco: #ffffff;
+}
+
+/* 1. TIPOGRAFÍA Y FONDO GLOBAL */
+body {
+  background-color: var(--cfe-gris-fondo);
+  color: var(--cfe-texto-principal);
+  font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 2. BARRA DE NAVEGACIÓN (HEADER) - VERDE CFE SÓLIDO */
+.navbar {
+  background-color: var(--cfe-verde-primario) !important; /* Fondo Verde Institucional */
+  box-shadow: 0 4px 15px rgba(0, 122, 51, 0.3);
+  padding: 0.8rem 1rem;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  color: var(--blanco) !important; /* Texto del logo en blanco */
+  letter-spacing: -0.5px;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.85) !important; /* Links en blanco suave */
+  font-weight: 500;
+  padding: 0.5rem 1rem !important;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+  background-color: var(--cfe-verde-oscuro); /* Verde más oscuro al pasar el mouse */
+  color: var(--blanco) !important;
+}
+
+.nav-link.active {
+  background-color: var(--cfe-verde-oscuro) !important; /* Pestaña activa resaltada */
+  color: var(--blanco) !important;
+  box-shadow: inset 0 3px 5px rgba(0,0,0,0.15); /* Sombra interna para dar profundidad */
+}
+
+/* 3. PANELES Y TARJETAS (CARDS) */
+.card {
+  background: var(--blanco);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.04);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.card-header {
+  background-color: var(--blanco);
+  border-bottom: 1px solid #edf2f9;
+  padding: 1.2rem 1.5rem;
+  font-weight: 600;
+  color: var(--cfe-texto-principal);
+  display: flex;
+  align-items: center;
+}
+
+/* 4. TABLAS MODERNAS (DataTables) */
+.table-responsive {
+  border-radius: 8px;
+}
+
+.table {
+  margin-bottom: 0;
+  color: var(--cfe-texto-principal);
+}
+
+.table thead th {
+  background-color: #f8f9fa;
+  color: var(--cfe-texto-secundario);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  border-bottom: 2px solid #edf2f9;
+  padding: 1rem;
+}
+
+.table tbody td {
+  padding: 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #edf2f9;
+  font-size: 0.9rem;
+}
+
+.table tbody tr:hover {
+  background-color: var(--cfe-verde-claro);
+  transition: background-color 0.2s;
+}
+
+/* 5. BOTONES INSTITUCIONALES */
+.btn {
+  border-radius: 6px;
+  font-weight: 500;
+  padding: 0.5rem 1.2rem;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.btn-primary, .btn-success {
+  background-color: var(--cfe-verde-primario);
+  border-color: var(--cfe-verde-primario);
+  color: var(--blanco);
+}
+
+.btn-primary:hover, .btn-success:hover {
+  background-color: var(--cfe-verde-oscuro);
+  border-color: var(--cfe-verde-oscuro);
+  box-shadow: 0 4px 12px rgba(0, 122, 51, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Botones de acción pequeña (tablas) */
+.btn-sm {
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+}
+
+/* 6. INPUTS Y FORMULARIOS */
+.form-control, .form-select {
+  border-radius: 6px;
+  border: 1px solid #dce1e7;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--cfe-verde-primario);
+  box-shadow: 0 0 0 0.25rem rgba(0, 122, 51, 0.15);
+}
+
+/* ========================================================
+   SOBRESCRIBIR EL AZUL DE BOOTSTRAP POR EL VERDE CFE
+   ======================================================== */
+/* Fondos */
+.bg-primary {
+  background-color: var(--cfe-verde-primario) !important;
+}
+
+/* Textos */
+.text-primary {
+  color: var(--cfe-verde-primario) !important;
+}
+
+/* Bordes */
+.border-primary {
+  border-color: var(--cfe-verde-primario) !important;
+}
+
+/* Botones con borde (outline) */
+.btn-outline-primary {
+  color: var(--cfe-verde-primario) !important;
+  border-color: var(--cfe-verde-primario) !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--cfe-verde-primario) !important;
+  color: var(--blanco) !important;
+}
+
+/* Badges / Etiquetas flotantes */
+.badge.bg-primary {
+  background-color: var(--cfe-verde-primario) !important;
+}

@@ -1,0 +1,262 @@
+/* Animación de carga */
+.spinner-border {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estilos de filas según estatus */
+.table tbody tr.estado-vigente {
+  border-left: 4px solid #28a745;
+  background-color: rgba(40, 167, 69, 0.02);
+}
+
+.table tbody tr.estado-vigente:hover {
+  background-color: rgba(40, 167, 69, 0.08);
+}
+
+.table tbody tr.estado-por_vencer {
+  border-left: 4px solid #ffc107;
+  background-color: rgba(255, 193, 7, 0.05);
+}
+
+.table tbody tr.estado-por_vencer:hover {
+  background-color: rgba(255, 193, 7, 0.12);
+}
+
+.table tbody tr.estado-vencido {
+  border-left: 4px solid #dc3545;
+  background-color: rgba(220, 53, 69, 0.05);
+}
+
+.table tbody tr.estado-vencido:hover {
+  background-color: rgba(220, 53, 69, 0.12);
+}
+
+/* Tarjetas indicadores */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Botones de grupo */
+.btn-group .btn {
+  border-radius: 0.5rem;
+  margin: 0 2px;
+}
+
+.btn-group .btn:first-child {
+  border-radius: 0.5rem 0 0 0.5rem;
+  margin-left: 0;
+}
+
+.btn-group .btn:last-child {
+  border-radius: 0 0.5rem 0.5rem 0;
+  margin-right: 0;
+}
+
+/* Dropdown personalizado */
+.dropdown-menu {
+  border-radius: 0.5rem;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.dropdown-item {
+  padding: 0.7rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover,
+.dropdown-item.active {
+  background-color: #f0f6ff;
+  color: #0d6efd;
+  font-weight: 600;
+}
+
+/* Tabla responsive */
+.table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  border-bottom: 2px solid #e9ecef;
+  padding: 1rem 0.75rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.table tbody td {
+  padding: 0.75rem;
+  vertical-align: middle;
+  border-color: #e9ecef;
+}
+
+/* Badge personalizados */
+.badge {
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.badge.bg-success {
+  background-color: #d4edda !important;
+  color: #155724;
+}
+
+.badge.bg-warning {
+  background-color: #fff3cd !important;
+  color: #856404;
+}
+
+.badge.bg-danger {
+  background-color: #f8d7da !important;
+  color: #721c24;
+}
+
+/* Tarjeta principal */
+.card {
+  border: none;
+  overflow: visible;
+}
+
+.card-header {
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* Input search */
+.input-group {
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.input-group input {
+  border: none;
+  padding: 0.75rem 1rem;
+}
+
+.input-group input:focus {
+  box-shadow: none;
+  border-color: #e9ecef;
+}
+
+/* Alertas vacías */
+.alert {
+  border-radius: 1rem;
+  border: 1px solid #e9ecef;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .table {
+    font-size: 0.75rem;
+  }
+
+  .table thead th {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .table tbody td {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .card-header {
+    padding: 1rem !important;
+  }
+
+  .badge {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* Animación de entrada para tarjetas */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: slideIn 0.5s ease-out;
+}
+
+.card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.table tbody tr.estado-reprobado {
+  border-left: 4px solid #343a40;
+  background-color: rgba(52, 58, 64, 0.05);
+}
+
+.table tbody tr.estado-reprobado:hover {
+  background-color: rgba(52, 58, 64, 0.12);
+}
+.card-filtro {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: 2px solid transparent !important;
+}
+
+.card-filtro:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+}
+
+/* Colores cuando la tarjeta está presionada/activa */
+.card-filtro.active-por-vencer { 
+  border-color: #ffc107 !important; 
+  background-color: #fffcf2 !important; 
+}
+.card-filtro.active-vencido { 
+  border-color: #dc3545 !important; 
+  background-color: #fff5f5 !important; 
+}
+.card-filtro.active-reprobado { 
+  border-color: #343a40 !important; 
+  background-color: #f8f9fa !important; 
+}
+
+/* Mejora visual a los botones de paginación */
+.btn-white {
+  background-color: white;
+  color: #495057;
+}
+.btn-white:hover:not(:disabled) {
+  background-color: #f8f9fa;
+  color: #0d6efd;
+}

@@ -1,0 +1,96 @@
+<nav
+  class="navbar navbar-expand-lg navbar-dark border-0 shadow-sm"
+  *ngIf="authService.isAuthenticated"
+>
+  <div class="container-fluid">
+    <a class="navbar-brand d-flex align-items-center" routerLink="/curso">
+      <span class="fw-bold">Sistema CFE</span>
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/curso" routerLinkActive="active">
+            <i class="fa-solid fa-book me-1"></i> Cursos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/trabajadores" routerLinkActive="active">
+            <i class="fa-solid fa-users me-1"></i> Trabajadores
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/generar-dc3" routerLinkActive="active">
+            <i class="fa-solid fa-file-pdf me-1"></i> Generar DC-3
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/carga-excel" routerLinkActive="active">
+            <i class="fa-solid fa-file-excel me-1"></i> Importar Excel
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/vigencia" routerLinkActive="active">
+            <i class="fa-solid fa-calendar-check me-1"></i> Vigencia
+          </a>
+        </li>
+      </ul>
+
+      <div class="navbar-nav">
+        <div class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle d-flex align-items-center"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <div class="usuario-avatar me-2">
+              <i class="fa-solid fa-user-circle fa-lg"></i>
+            </div>
+            <div class="d-none d-lg-block text-start">
+              <div class="usuario-nombre">{{ authService.currentUserValue?.nombre_completo }}</div>
+              <small class="usuario-rol" style="display: block; font-size: 0.75rem; opacity: 0.8">
+                {{ authService.currentUserValue?.rol }}
+              </small>
+            </div>
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+            <li class="dropdown-header">
+              <div class="fw-bold text-dark">
+                {{ authService.currentUserValue?.nombre_completo }}
+              </div>
+              <small class="text-muted">{{ authService.currentUserValue?.email }}</small>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <span class="dropdown-item-text">
+                <i class="fa-solid fa-id-badge me-2 text-success"></i>
+                <strong>Rol:</strong> {{ authService.currentUserValue?.rol }}
+              </span>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a class="dropdown-item text-danger" (click)="logout()" style="cursor: pointer">
+                <i class="fa-solid fa-right-from-bracket me-2"></i> Cerrar Sesión
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,318 @@
+<div class="container mt-4 animate__animated animate__fadeIn">
+
+  <div class="mb-3">
+    <button routerLink="/curso" class="btn btn-outline-primary rounded-pill shadow-sm">
+      <i class="fa-solid fa-arrow-left me-2"></i>Regresar al Catálogo
+    </button>
+  </div>
+
+  <!-- Encabezado del curso -->
+  <div class="card shadow-sm border-0 rounded-4 mb-4" *ngIf="curso">
+    <div class="card-body p-4 bg-primary text-white rounded-4 shadow">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="fw-bold mb-1">{{ curso.NOMBRE_DEL_CURSO }}</h2>
+          <span class="badge bg-white text-primary me-2">{{ curso.ACTIVIDAD }}</span>
+          <span class="opacity-75 small">{{ curso.AREA }}</span>
+        </div>
+        <div class="text-end">
+          <div class="h4 mb-0 fw-bold">{{ curso.DURACION_REAL_HRS }}h</div>
+          <small class="opacity-75">Duración Base</small> </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       PANEL DE FIRMAS — El usuario elige quiénes firman la constancia
+       Estos valores se envían al backend y se imprimen en el PDF.
+       ================================================================ -->
+  <div class="card shadow-sm border-0 rounded-4 mb-4" *ngIf="curso">
+    <div class="card-header bg-white border-bottom p-3">
+      <h6 class="mb-0 text-secondary fw-bold">
+        <i class="fa-solid fa-signature me-2 text-primary"></i>
+        Responsables que firmarán las constancias
+        <span class="badge bg-primary-subtle text-primary ms-2 small fw-normal">Se aplica a PDF individual y en lote</span>
+      </h6>
+    </div>
+    <div class="card-body p-3">
+      <div class="row g-3">
+
+        <div class="col-md-4">
+          <label class="form-label small fw-bold text-muted text-uppercase mb-1">
+            <i class="fa-solid fa-chalkboard-user me-1 text-info"></i>
+            Instructor o Tutor
+          </label>
+          <input list="listaInstructores" class="form-control border-2 shadow-sm" [(ngModel)]="firmas.instructor" placeholder="Selecciona o escribe un nombre...">
+          <datalist id="listaInstructores">
+            @for (nombre of catalogoInstructores; track nombre) {
+              <option [value]="nombre"></option>
+            }
+          </datalist>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label small fw-bold text-muted text-uppercase mb-1">
+            <i class="fa-solid fa-briefcase me-1 text-warning"></i>
+            Patrón o Rep. Legal CAMCAyPL
+          </label>
+          <input list="listaPatrones" class="form-control border-2 shadow-sm" [(ngModel)]="firmas.patron" placeholder="Selecciona o escribe un nombre...">
+          <datalist id="listaPatrones">
+            @for (nombre of catalogoPatrones; track nombre) {
+              <option [value]="nombre"></option>
+            }
+          </datalist>
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label small fw-bold text-muted text-uppercase mb-1">
+            <i class="fa-solid fa-users-gear me-1 text-success"></i>
+            Rep. Trabajadores CAMCAyPL
+          </label>
+          <input list="listaRepresentantes" class="form-control border-2 shadow-sm" [(ngModel)]="firmas.representante" placeholder="Selecciona o escribe un nombre...">
+          <datalist id="listaRepresentantes">
+            @for (nombre of catalogoRepresentantes; track nombre) {
+              <option [value]="nombre"></option>
+            }
+          </datalist>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de trabajadores -->
+  <div class="card shadow-sm border-0 rounded-4">
+    <div class="card-header bg-white p-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <h5 class="mb-0 text-secondary fw-bold">
+        <i class="fa-solid fa-users me-2"></i>Personal que acreditó este curso
+      </h5>
+
+      <div class="d-flex align-items-center gap-3 flex-wrap" *ngIf="trabajadoresTodos.length > 0">
+
+        <div class="d-flex align-items-center gap-2 border-end pe-3">
+          <select class="form-select form-select-sm w-auto border-2 shadow-sm"
+                  [(ngModel)]="anioSeleccionado" (ngModelChange)="aplicarFiltros()">
+            <option [ngValue]="'TODOS'">Año: Todos</option>
+            @for (anio of aniosDisponibles; track anio) {
+              <option [ngValue]="anio">{{ anio }}</option>
+            }
+          </select>
+          <select class="form-select form-select-sm w-auto border-2 shadow-sm"
+                  [(ngModel)]="estatusSeleccionado" (ngModelChange)="aplicarFiltros()">
+            <option [ngValue]="'TODOS'">Estatus: Todos</option>
+            @for (est of estatusDisponibles; track est) {
+              <option [ngValue]="est">{{ est }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Sin data-bs-toggle: el TS controla cuándo abre el modal -->
+        <button class="btn btn-primary btn-sm rounded-pill shadow-sm fw-bold"
+                (click)="verDocumentosLote()">
+          <i class="fa-solid fa-layer-group me-2"></i>Generar Pendientes en Lote
+        </button>
+
+        <span class="badge bg-light text-dark border ms-auto">{{ trabajadoresFiltrados.length }} Registros</span>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light small text-uppercase">
+          <tr>
+            <th class="ps-4">RPE / Nombre</th>
+            <th class="text-center">Periodo</th>
+            <th class="text-center">Horas</th> <th class="text-center">Calif.</th>
+            <th class="text-center">Estatus</th>
+            <th class="text-center">Operaciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of trabajadoresFiltrados; track t.id_registro) {
+            <tr>
+              <td class="ps-4">
+                <div class="fw-bold text-dark">{{ t.NOMBRE_COMPLETO }}</div>
+                <small class="text-primary fw-semibold">{{ t.RPE }}</small>
+              </td>
+              <td class="text-center">
+                <div class="small text-muted">Inicio: {{ t.fecha_inicio | date: 'dd/MM/yyyy' }}</div>
+                <div class="small text-muted">Fin: {{ t.fecha_termino | date: 'dd/MM/yyyy' }}</div>
+              </td>
+              <td class="text-center fw-bold text-info">
+                {{ t.horas_acreditadas ? t.horas_acreditadas + 'h' : '-' }}
+              </td>
+              <td class="text-center fw-bold text-success">{{ t.calificacion }}</td>
+              <td class="text-center">
+                <span class="badge rounded-pill shadow-sm"
+                      [ngClass]="t.estado_cchl === 'APROBADO' || t.estado_cchl === 'CERRADA CON ARCHIVO'
+                                 ? 'bg-success' : 'bg-danger'">
+                  {{ t.estado_cchl }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="d-flex justify-content-center gap-1">
+
+                  <!-- Editar -->
+                  <button class="btn btn-sm btn-outline-secondary rounded-circle"
+                          title="Editar registro"
+                          data-bs-toggle="modal" data-bs-target="#modalEditar"
+                          (click)="editarRegistro(t)">
+                    <i class="fa-solid fa-pencil"></i>
+                  </button>
+
+                  <!-- Ver PDF — sin data-bs-toggle, lo maneja el TS -->
+                  <button class="btn btn-sm btn-outline-info rounded-circle"
+                          title="Vista previa DC-3"
+                          (click)="verDocumento(t)">
+                    <i class="fa-solid fa-file-pdf"></i>
+                  </button>
+
+                  <!-- ✅ NUEVO: Resetear estado a NO GENERADA -->
+                  <!-- Solo aparece si el estado actual es CERRADA CON ARCHIVO o APROBADO -->
+                  @if (t.estado_cchl === 'CERRADA CON ARCHIVO' || t.estado_cchl === 'APROBADO') {
+                    <button class="btn btn-sm btn-outline-warning rounded-circle"
+                            title="Regresar a NO GENERADA"
+                            (click)="resetearEstado(t)">
+                      <i class="fa-solid fa-rotate-left"></i>
+                    </button>
+                  }
+
+                  <!-- Eliminar -->
+                  <button class="btn btn-sm btn-outline-danger rounded-circle"
+                          title="Eliminar registro"
+                          (click)="eliminarRegistro(t)">
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
+
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="text-center py-5 text-muted">
+                <p class="mb-0">No hay personal registrado que coincida con la búsqueda.</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     MODAL: Vista previa del PDF
+     El modal lo abre el TypeScript (no data-bs-toggle) para controlar
+     el timing y mostrar el spinner correctamente.
+     ================================================================ -->
+<div class="modal fade" id="modalVistaPrevia" tabindex="-1" aria-labelledby="modalPdfLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0 rounded-4">
+
+      <div class="modal-header bg-dark text-white rounded-top-4">
+        <h5 class="modal-title fw-bold" id="modalPdfLabel">
+          <i class="fa-solid fa-file-pdf text-danger me-2"></i>
+          {{ modoLote ? 'Vista Previa: Lote de Constancias DC-3' : 'Vista Previa de Constancia DC-3' }}
+          <small class="opacity-75 fw-normal ms-2" *ngIf="trabajadorPdf && !modoLote">
+            — {{ trabajadorPdf.NOMBRE_COMPLETO }}
+          </small>
+        </h5>
+        <button type="button" class="btn-close btn-close-white"
+                data-bs-dismiss="modal" (click)="cerrarVistaPrevia()"></button>
+      </div>
+
+      <div class="modal-body p-0 bg-light" style="height: 75vh;">
+
+        <!-- Spinner mientras carga -->
+        <div class="d-flex justify-content-center align-items-center h-100" *ngIf="cargandoPdf">
+          <div class="text-center text-secondary">
+            <div class="spinner-border border-3 text-primary mb-3"
+                 style="width: 3rem; height: 3rem;" role="status"></div>
+            <h5 class="fw-bold">
+              {{ modoLote ? 'Procesando Lote de Documentos...' : 'Generando Documento...' }}
+            </h5>
+            <small>Por favor espere un momento.</small>
+          </div>
+        </div>
+
+        <!-- iframe del PDF -->
+        <iframe *ngIf="pdfUrlSegura && !cargandoPdf"
+                [src]="pdfUrlSegura"
+                class="w-100 h-100 border-0"
+                title="Vista Previa PDF"></iframe>
+      </div>
+
+      <div class="modal-footer bg-light rounded-bottom-4 d-flex justify-content-between align-items-center">
+
+        <!-- Info de firmantes seleccionados -->
+        <div class="small text-muted d-none d-md-block">
+          <i class="fa-solid fa-signature me-1"></i>
+          <span class="me-3"><strong>Inst:</strong> {{ firmas.instructor }}</span>
+          <span class="me-3"><strong>Pat:</strong> {{ firmas.patron }}</span>
+          <span><strong>Rep:</strong> {{ firmas.representante }}</span>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-secondary fw-bold rounded-pill shadow-sm"
+                  data-bs-dismiss="modal" (click)="cerrarVistaPrevia()">
+            <i class="fa-solid fa-xmark me-2"></i>Cerrar
+          </button>
+          <button type="button" class="btn btn-success fw-bold rounded-pill shadow-sm"
+                  *ngIf="pdfUrlSegura && !cargandoPdf"
+                  (click)="descargarPdf()"
+                  data-bs-dismiss="modal">
+            <i class="fa-solid fa-download me-2"></i>
+            {{ modoLote ? 'Descargar Todas y Cerrar Estatus' : 'Descargar y Cerrar Estatus' }}
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header bg-primary text-white rounded-top-4 border-0">
+        <h5 class="modal-title fw-bold"><i class="fa-solid fa-pencil me-2"></i>Editar Registro</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <form (ngSubmit)="guardarEdicion()">
+          
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">Trabajador</label>
+            <input type="text" class="form-control bg-light fw-bold" [value]="registroAEditar.NOMBRE_COMPLETO" readonly>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label text-primary small fw-bold">Fecha de Inicio</label>
+              <input type="date" class="form-control" name="fecha_inicio" [(ngModel)]="registroAEditar.fecha_inicio">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-primary small fw-bold">Fecha de Término</label>
+              <input type="date" class="form-control" name="fecha_termino" [(ngModel)]="registroAEditar.fecha_termino">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-primary small fw-bold">Horas Acreditadas</label>
+              <input type="number" class="form-control" name="horas_acreditadas" [(ngModel)]="registroAEditar.horas_acreditadas">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-primary small fw-bold">Calificación</label>
+              <input type="number" step="0.01" class="form-control" name="calificacion" [(ngModel)]="registroAEditar.calificacion">
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button type="button" class="btn btn-secondary rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold">
+              <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Cambios
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

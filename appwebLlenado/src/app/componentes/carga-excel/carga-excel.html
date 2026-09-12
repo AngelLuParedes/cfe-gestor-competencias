@@ -1,0 +1,200 @@
+<div class="carga-container">
+  <div class="card-header">
+    <div>
+      <h2>Carga Masiva de Datos</h2>
+      <p class="subtitle">Importa registros desde un archivo Excel (.xlsx / .xls)</p>
+    </div>
+  </div>
+
+  <!-- Selector de tabla destino -->
+  <div class="form-group">
+    <label for="tablaDestino">Tabla de destino</label>
+    <select id="tablaDestino" [(ngModel)]="tablaSeleccionada" class="select-input">
+      <option value="">-- Selecciona una opción --</option>
+      <option value="completo">Reporte CCHL Completo (3 tablas automático)</option>
+      <optgroup label="── Carga individual ──">
+        <option value="cursos">Cursos</option>
+        <option value="trabajadores">Trabajadores</option>
+        <option value="historial">Historial de Capacitación</option>
+        <option value="cursos">Cursos</option>
+        <option value="trabajadores">Trabajadores</option>
+        <option value="historial">Historial de Capacitación</option>
+        <option value="kardex">Kardex de Trabajador (Excel Individual)</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <!-- Banner modo completo -->
+  <div class="banner-completo" *ngIf="esModoCompleto">
+    <div>
+      <strong>Modo Automático</strong>
+      <p>
+        Sube tu reporte CCHL y el sistema separará automáticamente los datos en
+        <strong>Cursos</strong>, <strong>Trabajadores</strong> e
+        <strong>Historial</strong>.
+        Los registros existentes se <strong>actualizarán</strong> con los nuevos datos.
+      </p>
+    </div>
+  </div>
+
+  <!-- Columnas esperadas -->
+  <div class="columnas-info" *ngIf="tablaSeleccionada">
+    <span class="info-label">Columnas requeridas en el Excel:</span>
+    <div class="chips">
+      <span class="chip" *ngFor="let col of columnasEsperadas[tablaSeleccionada]">{{ col }}</span>
+    </div>
+  </div>
+
+  <!-- Drop zone -->
+  <div
+    class="drop-zone"
+    [class.drag-over]="isDragging"
+    [class.has-file]="archivoSeleccionado"
+    [class.disabled]="!tablaSeleccionada"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+    (click)="tablaSeleccionada && fileInput.click()"
+  >
+    <input #fileInput type="file" accept=".xlsx,.xls,.csv"
+           (change)="onFileSelected($event)" style="display:none" />
+
+    <ng-container *ngIf="!archivoSeleccionado">
+      <div class="drop-icon">⬆️</div>
+      <p class="drop-text">
+        {{ tablaSeleccionada ? 'Arrastra tu archivo aquí o haz clic para seleccionar'
+                             : 'Primero selecciona una opción de carga' }}
+      </p>
+      <p class="drop-hint" *ngIf="tablaSeleccionada">Formatos: .xlsx, .xls, .csv — máx. 10 MB</p>
+    </ng-container>
+
+    <ng-container *ngIf="archivoSeleccionado">
+      <div class="file-preview">
+        <div class="file-info">
+          <strong>{{ archivoSeleccionado.name }}</strong>
+          <span class="file-size">{{ formatSize(archivoSeleccionado.size) }}</span>
+        </div>
+        <button class="btn-remove" (click)="removeFile($event)" title="Quitar">✕</button>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Error -->
+  <div class="alert alert-error" *ngIf="errorMensaje">
+    <span></span> {{ errorMensaje }}
+  </div>
+
+  <!-- Progreso -->
+  <div class="progress-wrapper" *ngIf="cargando">
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+    <p class="progress-text">Procesando archivo...</p>
+  </div>
+
+  <!-- Resultado carga individual -->
+  <div class="alert alert-success" *ngIf="resultadoCarga">
+    <span>✅</span>
+    <div>
+      <strong>¡Carga completada!</strong>
+      <p>{{ resultadoCarga.mensaje }}</p>
+      <p class="result-detail">
+        Procesados: <strong>{{ resultadoCarga.insertados }}</strong>
+        <ng-container *ngIf="resultadoCarga.omitidos > 0">
+          &nbsp;| Omitidos: <strong>{{ resultadoCarga.omitidos }}</strong>
+        </ng-container>
+      </p>
+    </div>
+  </div>
+
+  <!-- Resultado carga completa (3 tablas) -->
+  <div class="resultado-completo" *ngIf="resultadoCompleto">
+    <div class="resultado-titulo">
+      <span>✅</span>
+      <div>
+        <strong>¡Carga automática completada!</strong>
+        <p>{{ resultadoCompleto.mensaje }}</p>
+      </div>
+    </div>
+
+    <div class="resultado-grid">
+      <!-- Cursos -->
+      <div class="resultado-card">
+        <div class="rc-label">Cursos</div>
+        <div class="rc-stats">
+          <span class="rc-ins"  *ngIf="resultadoCompleto.cursos.insertados > 0">
+            +{{ resultadoCompleto.cursos.insertados }} nuevos
+          </span>
+          <span class="rc-upd"  *ngIf="resultadoCompleto.cursos.actualizados > 0">
+            ↺{{ resultadoCompleto.cursos.actualizados }} actualizados
+          </span>
+          <span class="rc-omit" *ngIf="resultadoCompleto.cursos.omitidos > 0">
+            ={{ resultadoCompleto.cursos.omitidos }} sin cambios
+          </span>
+          <span class="rc-ins" *ngIf="resultadoCompleto.cursos.insertados === 0
+                                   && resultadoCompleto.cursos.actualizados === 0">
+            sin cambios
+          </span>
+        </div>
+      </div>
+      <!-- Trabajadores -->
+      <div class="resultado-card">
+        <div class="rc-label">Trabajadores</div>
+        <div class="rc-stats">
+          <span class="rc-ins"  *ngIf="resultadoCompleto.trabajadores.insertados > 0">
+            +{{ resultadoCompleto.trabajadores.insertados }} nuevos
+          </span>
+          <span class="rc-upd"  *ngIf="resultadoCompleto.trabajadores.actualizados > 0">
+            ↺{{ resultadoCompleto.trabajadores.actualizados }} actualizados
+          </span>
+          <span class="rc-omit" *ngIf="resultadoCompleto.trabajadores.omitidos > 0">
+            ={{ resultadoCompleto.trabajadores.omitidos }} sin cambios
+          </span>
+          <span class="rc-ins" *ngIf="resultadoCompleto.trabajadores.insertados === 0
+                                   && resultadoCompleto.trabajadores.actualizados === 0">
+            sin cambios
+          </span>
+        </div>
+      </div>
+      <!-- Historial -->
+      <div class="resultado-card">
+        <div class="rc-icon">📋</div>
+        <div class="rc-label">Historial</div>
+        <div class="rc-stats">
+          <span class="rc-ins"  *ngIf="resultadoCompleto.historial.insertados > 0">
+            +{{ resultadoCompleto.historial.insertados }} nuevos
+          </span>
+          <span class="rc-omit" *ngIf="resultadoCompleto.historial.omitidos > 0">
+            ↷{{ resultadoCompleto.historial.omitidos }} ya existían
+          </span>
+          <span class="rc-ins" *ngIf="resultadoCompleto.historial.insertados === 0">
+            sin cambios
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="resultado-totales">
+      <span *ngIf="resultadoCompleto.totalInsertados > 0">
+        Nuevos: <strong>{{ resultadoCompleto.totalInsertados }}</strong> &nbsp;|&nbsp;
+      </span>
+      <span *ngIf="resultadoCompleto.totalActualizados > 0">
+        Actualizados: <strong>{{ resultadoCompleto.totalActualizados }}</strong> &nbsp;|&nbsp;
+      </span>
+      Filas procesadas: <strong>{{ resultadoCompleto.totalFilas }}</strong>
+    </div>
+  </div>
+
+  <!-- Acciones -->
+  <div class="actions">
+    <button class="btn btn-secondary" (click)="limpiarFormulario()" [disabled]="cargando">
+      Limpiar
+    </button>
+    <button
+      class="btn btn-primary"
+      (click)="subirArchivo()"
+      [disabled]="!archivoSeleccionado || !tablaSeleccionada || cargando"
+    >
+      <span *ngIf="!cargando">⬆ Subir archivo</span>
+      <span *ngIf="cargando">Procesando...</span>
+    </button>
+  </div>
+</div>

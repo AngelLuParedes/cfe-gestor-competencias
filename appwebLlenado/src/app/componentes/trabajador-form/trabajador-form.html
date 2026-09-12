@@ -1,0 +1,85 @@
+<div class="container mt-5 animate__animated animate__fadeIn">
+  <div class="card shadow-lg border-0 rounded-4 mx-auto" style="max-width: 650px;">
+    <div class="card-header bg-primary text-white p-4 text-center">
+      <h4 class="mb-0 fw-bold"><i class="fa-solid fa-user-plus me-2"></i>Nuevo Trabajador</h4>
+    </div>
+    <div class="card-body p-4 p-md-5">
+      
+      <form #trabajadorForm="ngForm" (ngSubmit)="guardar(trabajadorForm)" novalidate>
+        
+        <div class="row g-3 mb-4">
+          <div class="col-md-5">
+            <label class="form-label small fw-bold text-secondary">RPE (5 caracteres)</label>
+            <input type="text" name="RPE" [(ngModel)]="trabajador.RPE" 
+                   class="form-control border-2 shadow-sm" required maxlength="5" minlength="5"
+                   pattern="^[A-Z0-9]{5}$" #rpe="ngModel" placeholder="Ej: 9B18B"
+                   (input)="verificarRPE()">
+            
+            <div *ngIf="errorRPE" class="text-success small mt-1 animate__animated animate__fadeOut">
+              <i class="fa-solid fa-check-circle"></i> Límite de 5 caracteres alcanzado.
+            </div>
+            <div *ngIf="rpe.invalid && (rpe.dirty || rpe.touched) && trabajador.RPE.length < 5" class="text-danger small mt-1">
+              Requiere exactamente 5 caracteres.
+            </div>
+          </div>
+
+          <div class="col-md-7">
+            <label class="form-label small fw-bold text-secondary">CURP (18 caracteres)</label>
+            <input type="text" name="CURP" [(ngModel)]="trabajador.CURP" 
+                   class="form-control border-2 shadow-sm" required maxlength="18" minlength="18"
+                   pattern="^[A-Z0-9]{18}$" #curp="ngModel" placeholder="CURP de 18 caracteres"
+                   (input)="verificarCURP()">
+            
+            <div *ngIf="errorCURP" class="text-success small mt-1 animate__animated animate__fadeOut">
+              <i class="fa-solid fa-check-circle"></i> Límite de 18 caracteres alcanzado.
+            </div>
+            <div *ngIf="curp.invalid && (curp.dirty || curp.touched) && trabajador.CURP.length < 18" class="text-danger small mt-1">
+              Debe tener 18 caracteres.
+            </div>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label small fw-bold text-secondary">Nombre Completo</label>
+            <input type="text" name="NOMBRE_COMPLETO" [(ngModel)]="trabajador.NOMBRE_COMPLETO" 
+                   class="form-control border-2 shadow-sm" required 
+                   pattern="^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$" #nombre="ngModel" placeholder="Nombres y Apellidos">
+            <div *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)" class="text-danger small mt-1">
+              Solo se permiten letras.
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-4 text-muted">
+
+        <div class="form-check form-switch mb-4">
+          <input class="form-check-input" type="checkbox" id="vincularSwitch" name="vincularSwitch" [(ngModel)]="vincularCursoAhora">
+          <label class="form-check-label fw-bold text-primary" for="vincularSwitch">¿Vincular curso ahora?</label>
+        </div>
+
+        <div *ngIf="vincularCursoAhora" class="p-3 bg-light rounded-3 border mb-4 animate__animated animate__fadeIn">
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Curso</label>
+            <select name="clave_curso" [(ngModel)]="trabajador.clave_curso" class="form-select border-2">
+              <option value="">-- Seleccione --</option>
+              @for (c of cursosDisponibles; track c.CLAVE_CURSO) {
+                <option [value]="c.CLAVE_CURSO">{{ c.NOMBRE_DEL_CURSO }}</option>
+              }
+            </select>
+          </div>
+          <div class="row g-2">
+            <div class="col-md-4"><label class="small fw-bold">Inicio</label><input type="date" name="fecha_inicio" [(ngModel)]="trabajador.fecha_inicio" class="form-control form-control-sm"></div>
+            <div class="col-md-4"><label class="small fw-bold">Término</label><input type="date" name="fecha_termino" [(ngModel)]="trabajador.fecha_termino" class="form-control form-control-sm"></div>
+            <div class="col-md-4"><label class="small fw-bold">Calif.</label><input type="number" name="calificacion" [(ngModel)]="trabajador.calificacion" class="form-control form-control-sm"></div>
+          </div>
+        </div>
+
+        <div class="d-grid gap-2">
+          <button type="submit" [disabled]="trabajadorForm.invalid" class="btn btn-primary btn-lg rounded-pill shadow-sm">
+            <i class="fa-solid fa-save me-2"></i>Guardar Registro
+          </button>
+          <a routerLink="/trabajadores" class="btn btn-link text-muted">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
